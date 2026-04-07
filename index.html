@@ -1,90 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-br">
 <head>
-  <base target="_top">
-  <!-- CORREÇÃO: Links reais das bibliotecas -->
-  <link href="https://jsdelivr.net" rel="stylesheet">
-  <script src="https://jsdelivr.net"></script>
-  
-  <style>
-    body { background: transparent; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
-    .card-venda { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-    .form-control, .form-select { background: rgba(255,255,255,0.1) !important; color: white !important; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 15px; }
-    .btn-comprar { background: #002d72; color: white; width: 100%; font-weight: bold; border: none; padding: 14px; border-radius: 12px; transition: 0.3s; }
-    .btn-comprar:hover { background: #0044aa; transform: translateY(-2px); }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SamuelSports - Dashboard</title>
+    <style>
+        body {
+            background-image: url("view-empty-soccer-stadium-with-fantasy-dreamy-sky.jpg");
+            background-size: cover; background-position: center; background-attachment: fixed;
+            min-height: 100vh; margin: 0; display: flex; flex-direction: column; align-items: center; color: white; font-family: sans-serif;
+        }
+        h1 { font-weight: 900; margin: 40px 0; text-shadow: 0 4px 15px rgba(0,0,0,0.8); letter-spacing: 2px; }
+        .main-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 30px; width: 95%; max-width: 1200px; margin-bottom: 50px; }
+        .iframe-card { flex: 1; min-width: 380px; height: 85vh; max-height: 800px; background: rgba(0,0,0,0.2); border-radius: 25px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        iframe { width: 100%; height: 100%; border: none; }
+        
+        @media (max-width: 800px) { .iframe-card { height: 750px; } }
+    </style>
 </head>
 <body>
-
-<div class="card-venda">
-  <h3 class="text-center mb-4">🏆 SAMUELSPORTS</h3>
-  <form id="formSupa">
-    <label class="small fw-bold">NOME</label>
-    <input type="text" id="n" class="form-control" placeholder="Seu nome" required>
-    
-    <label class="small fw-bold">E-MAIL</label>
-    <input type="email" id="e" class="form-control" placeholder="exemplo@email.com" required>
-    
-    <div class="row">
-      <div class="col-7">
-        <label class="small fw-bold">SETOR</label>
-        <select id="s" class="form-select">
-          <option value="Arquibancada">Arquibancada</option>
-          <option value="VIP">VIP</option>
-        </select>
-      </div>
-      <div class="col-5">
-        <label class="small fw-bold">QTD</label>
-        <input type="number" id="q" class="form-control" value="1" min="1">
-      </div>
+    <h1>SAMUELSPORTS DASHBOARD</h1>
+    <div class="main-container">
+        <!-- O Iframe puxa o arquivo local vendas.html -->
+        <div class="iframe-card">
+            <iframe src="vendas.html" allowtransparency="true"></iframe>
+        </div>
     </div>
-    <button type="submit" id="btn" class="btn-comprar">RESERVAR INGRESSO</button>
-  </form>
-  <div id="msg" class="text-center mt-3 fw-bold"></div>
-</div>
-
-<script>
-  // CORREÇÃO: URL Completa e Key
-  const S_URL = 'https://dvvfpsiflsbnvygorqgz.supabase.co';
-  const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2dmZwc2lmbHNibnZ5Z29ycWd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MTAxNjIsImV4cCI6MjA5MTA4NjE2Mn0.Ap2G-T4Ke8RkgHb8iwBaSCidAmlTlfpUZ8g94S4zCvY';
-  
-  // Inicializa o cliente Supabase
-  const supabaseClient = supabase.createClient(S_URL, S_KEY);
-
-  document.getElementById('formSupa').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('btn');
-    const msg = document.getElementById('msg');
-    
-    btn.disabled = true;
-    btn.innerHTML = '⚡ ENVIANDO...';
-    msg.innerHTML = "";
-
-    try {
-      const dados = {
-        nome: document.getElementById('n').value,
-        email: document.getElementById('e').value,
-        setor: document.getElementById('s').value,
-        quantidade: parseInt(document.getElementById('q').value)
-      };
-
-      const { error } = await supabaseClient.from('vendas').insert([dados]);
-
-      if (error) throw error;
-
-      msg.style.color = "#00ff00";
-      msg.innerHTML = "✅ RESERVA CONFIRMADA!";
-      document.getElementById('formSupa').reset();
-
-    } catch (err) {
-      msg.style.color = "#ff4d4d";
-      msg.innerHTML = "Erro: " + err.message;
-      console.error(err);
-    } finally {
-      btn.disabled = false;
-      btn.innerHTML = 'RESERVAR INGRESSO';
-    }
-  });
-</script>
 </body>
 </html>
