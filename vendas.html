@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <link href="https://jsdelivr.net" rel="stylesheet">
+  <script src="https://jsdelivr.net"></script>
+  <style>
+    body { background: transparent !important; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 10px; margin: 0; }
+    .card-venda { background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); border-radius: 20px; padding: 25px; width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); }
+    .form-control, .form-select { background: rgba(255,255,255,0.1) !important; color: white !important; border: 1px solid rgba(255,255,255,0.2); margin-bottom: 15px; }
+    .btn-comprar { background: #002d72; color: white; width: 100%; font-weight: bold; border: none; padding: 14px; border-radius: 12px; transition: 0.3s; }
+    .btn-comprar:hover { background: #0044aa; }
+  </style>
+</head>
+<body>
+<div class="card-venda">
+  <h3 class="text-center mb-3">🏆 SAMUELSPORTS</h3>
+  <form id="formSupa">
+    <input type="text" id="n" class="form-control" placeholder="Seu Nome" required>
+    <input type="email" id="e" class="form-control" placeholder="Seu E-mail" required>
+    <div class="row">
+      <div class="col-7"><select id="s" class="form-select"><option value="Arquibancada">Arquibancada</option><option value="VIP">VIP</option></select></div>
+      <div class="col-5"><input type="number" id="q" class="form-control" value="1" min="1"></div>
+    </div>
+    <button type="submit" id="btn" class="btn-comprar">RESERVAR AGORA</button>
+  </form>
+  <div id="msg" class="text-center mt-3 fw-bold"></div>
+</div>
+
+<script>
+  const S_URL = 'https://supabase.co';
+  const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2dmZwc2lmbHNibnZ5Z29ycWd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MTAxNjIsImV4cCI6MjA5MTA4NjE2Mn0.Ap2G-T4Ke8RkgHb8iwBaSCidAmlTlfpUZ8g94S4zCvY';
+  const supabaseClient = supabase.createClient(S_URL, S_KEY);
+
+  document.getElementById('formSupa').onsubmit = async (event) => {
+    event.preventDefault();
+    const btn = document.getElementById('btn');
+    const msg = document.getElementById('msg');
+    btn.disabled = true; btn.innerHTML = '⚡ PROCESSANDO...';
+
+    try {
+      const { error } = await supabaseClient.from('vendas').insert([{ 
+          nome: document.getElementById('n').value, 
+          email: document.getElementById('e').value,
+          setor: document.getElementById('s').value,
+          quantidade: parseInt(document.getElementById('q').value)
+      }]);
+      if (error) throw error;
+      msg.style.color = "#00ff00"; msg.innerHTML = "✅ SUCESSO! DADO NO BANCO.";
+      document.getElementById('formSupa').reset();
+    } catch (err) {
+      msg.style.color = "#ff4d4d"; msg.innerHTML = "Erro: " + err.message;
+    } finally {
+      btn.disabled = false; btn.innerHTML = 'RESERVAR AGORA';
+    }
+  };
+</script>
+</body>
+</html>
