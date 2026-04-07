@@ -42,60 +42,46 @@
 </div>
 
 <script>
-  // CONFIGURAÇÃO DO SEU PROJETO SAMUELSPORTS
+  // Suas credenciais SamuelSports
   const S_URL = 'https://supabase.co';
   const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2dmZwc2lmbHNibnZ5Z29ycWd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MTAxNjIsImV4cCI6MjA5MTA4NjE2Mn0.Ap2G-T4Ke8RkgHb8iwBaSCidAmlTlfpUZ8g94S4zCvY';
   
   const supabaseClient = supabase.createClient(S_URL, S_KEY);
 
-  document.getElementById('formSupa').addEventListener('submit', async (event) => {
-    event.preventDefault();
+  document.getElementById('formSupa').addEventListener('submit', async (e) => {
+    e.preventDefault();
     const btn = document.getElementById('btn');
     const msg = document.getElementById('msg');
     
     btn.disabled = true;
-    btn.innerHTML = 'VERIFICANDO VAGAS...';
+    btn.innerHTML = '⚡ ENVIANDO AGORA...';
+    msg.innerHTML = "";
 
     try {
-      // 1. VERIFICAR LIMITE DE 12 VAGAS
-      const { data: vendas, error: errBusca } = await supabaseClient.from('vendas').select('quantidade');
-      if (errBusca) throw errBusca;
+      // Coleta os dados rápido
+      const dados = {
+        nome: document.getElementById('n').value,
+        email: document.getElementById('e').value,
+        setor: document.getElementById('s').value,
+        quantidade: parseInt(document.getElementById('q').value)
+      };
 
-      let totalVendido = vendas.reduce((acc, item) => acc + (item.quantidade || 0), 0);
-      const desejado = parseInt(document.getElementById('q').value);
-      const limite = 12;
+      // ENVIO DIRETO (Sem verificar limite primeiro, para testar a velocidade)
+      const { error } = await supabaseClient.from('vendas').insert([dados]);
 
-      if (totalVendido + desejado > limite) {
-        msg.style.color = "#ff4d4d";
-        msg.innerHTML = "❌ Esgotado! Restam apenas " + (limite - totalVendido) + " vagas.";
-        btn.disabled = false;
-        btn.innerHTML = 'RESERVAR INGRESSO';
-        return;
-      }
-
-      // 2. SALVAR NO BANCO
-      const { error: errInsert } = await supabaseClient.from('vendas').insert([
-        { 
-          nome: document.getElementById('n').value, 
-          email: document.getElementById('e').value, 
-          setor: document.getElementById('s').value, 
-          quantidade: desejado 
-        }
-      ]);
-
-      if (errInsert) throw errInsert;
+      if (error) throw error;
 
       msg.style.color = "#00ff00";
-      msg.innerHTML = "✅ Reserva Confirmada no Banco!";
+      msg.innerHTML = "✅ RESERVA CONFIRMADA!";
       document.getElementById('formSupa').reset();
 
-    } catch (e) {
+    } catch (err) {
       msg.style.color = "#ff4d4d";
-      msg.innerHTML = "Erro: " + e.message;
+      msg.innerHTML = "Erro: " + err.message;
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = 'RESERVAR INGRESSO';
     }
-
-    btn.disabled = false;
-    btn.innerHTML = 'RESERVAR INGRESSO';
   });
 </script>
 </body>
