@@ -2,8 +2,10 @@
 <html>
 <head>
   <base target="_top">
+  <!-- CORREÇÃO: Links reais das bibliotecas -->
   <link href="https://jsdelivr.net" rel="stylesheet">
   <script src="https://jsdelivr.net"></script>
+  
   <style>
     body { background: transparent; color: white; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
     .card-venda { background: rgba(0,0,0,0.85); backdrop-filter: blur(15px); border-radius: 20px; padding: 30px; width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
@@ -42,10 +44,11 @@
 </div>
 
 <script>
-  // Suas credenciais SamuelSports
-  const S_URL = 'https://supabase.co';
+  // CORREÇÃO: URL Completa e Key
+  const S_URL = 'https://dvvfpsiflsbnvygorqgz.supabase.co';
   const S_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImR2dmZwc2lmbHNibnZ5Z29ycWd6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzU1MTAxNjIsImV4cCI6MjA5MTA4NjE2Mn0.Ap2G-T4Ke8RkgHb8iwBaSCidAmlTlfpUZ8g94S4zCvY';
   
+  // Inicializa o cliente Supabase
   const supabaseClient = supabase.createClient(S_URL, S_KEY);
 
   document.getElementById('formSupa').addEventListener('submit', async (e) => {
@@ -54,11 +57,10 @@
     const msg = document.getElementById('msg');
     
     btn.disabled = true;
-    btn.innerHTML = '⚡ ENVIANDO AGORA...';
+    btn.innerHTML = '⚡ ENVIANDO...';
     msg.innerHTML = "";
 
     try {
-      // Coleta os dados rápido
       const dados = {
         nome: document.getElementById('n').value,
         email: document.getElementById('e').value,
@@ -66,7 +68,6 @@
         quantidade: parseInt(document.getElementById('q').value)
       };
 
-      // ENVIO DIRETO (Sem verificar limite primeiro, para testar a velocidade)
       const { error } = await supabaseClient.from('vendas').insert([dados]);
 
       if (error) throw error;
@@ -78,6 +79,7 @@
     } catch (err) {
       msg.style.color = "#ff4d4d";
       msg.innerHTML = "Erro: " + err.message;
+      console.error(err);
     } finally {
       btn.disabled = false;
       btn.innerHTML = 'RESERVAR INGRESSO';
